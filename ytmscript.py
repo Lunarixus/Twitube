@@ -9,6 +9,7 @@ import urllib.request
 from bs4 import BeautifulSoup
 import time
 import _thread
+import sys
 
 # Variables
 port = "9863"
@@ -28,27 +29,22 @@ def scrapesong(url):
 # Define function for scraping and writing to file
 def grabandwrite(url):
     while True:
-        print("[INFO]: Scraping currently playing song...")
-        song = scrapesong(url)
-        if song != "":
-            print("[INFO]: Current song:", scrapesong(url))
-            file = open("currentplaying.txt", "r+")
-            file.truncate(0)
-            print("[INFO]: File cleared!")
-            file.close()
-            file = open("currentplaying.txt", "w+")
-            file.write(song)
-            print("[INFO]: Song written to file!")
-            file.close()
+        try:
+            print("[INFO]: Scraping currently playing song...")
+            song = scrapesong(url)
+            if song != "":
+                print("[INFO]: Current song:", scrapesong(url))
+                file = open("currentplaying.txt", "w+")
+                file.truncate(0)
+                print("[INFO]: File cleared!")
+                file.write(song)
+                print("[INFO]: Song written to file!")
+                file.close()
+        except:
+            print("[ERROR]: Whoops, something went wrong, retrying...", sys.exc_info()[0])
 
-        time.sleep(1)
+        time.sleep(2)
 
 # Make thread and start program
 print("[INFO]: Starting thread...")
-try:
-    _thread.start_new_thread( grabandwrite(url), ("Thread-1", 2, ) )
-except:
-    print("[FAIL]: Failed to make thread!")
-
-while 1:
-    pass
+grabandwrite(url)
